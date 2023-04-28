@@ -1,0 +1,19 @@
+Requerimentos para instalación y uso como desarrollador:
+
+1. Instalar python version 3.10.4 en su computador. --> https://www.python.org/downloads/
+2. Del zip, instalar gtk3-runtime en su computador. 
+3. En consola CMD con el python instalado, se deben instalar las siguientes librerias con ayuda de "pip install":
+pip install Django===4.0.5
+pip install django-widget-tweaks
+pip install Pillow
+pip install django-resized
+pip install django-weasyprint
+
+4. Una vez instaladas las librerias, se procede a arrancar el proyecto (desde una consola cmd en la carpeta origen del proyecto)
+con el comando "python manage.py runserver" o utilizando el archivo "executable.bat" 
+
+5. El proyecto se jecutará en localhost:8000
+
+6. Usuario: admin
+   Contraseña: lecogram
+

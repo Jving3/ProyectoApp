@@ -1,0 +1,120 @@
+{% load static %}
+{% load humanize %}
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Mantenimiento Preventivo # {{preventivo.id}}</title>
+    <link rel="stylesheet" href="{% static 'index/css/bootstrap.min.css' %}">
+    <style>
+        @page {
+            size: "A4";
+            margin: 1.0cm 1.5cm 3.5cm 1.5cm;
+        }
+
+        body {
+            width: 100% !important;
+            height: 100%;
+            background: #fff;
+            color: black;
+            font-size: 100%;
+            font-family: 'Calibri', Times, serif;
+            line-height: 1.65;
+            -webkit-font-smoothing: antialiased;
+            -webkit-text-size-adjust: none;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+        <table class="table">
+            <tr>
+                <td class="text-left">
+                    <img src="{{empresa.imagen.url}}" alt="Logo empresa" width="30">
+                </td>
+                <td style="font-size:small;" class="text-left">
+                    <h4>{{empresa.nombre}}</h4>
+                    {{empresa.domicilio}} <br>
+                    {{empresa.telefono}}
+                </td>
+                <td class="text-right" style="font-size: small;">
+                    <b>Tipo OT:</b> Preventivo <br>
+                    <b>OT Fecha programada:</b> {{preventivo.fecha | date:"d-m-Y"}} <br>
+                    <b> Solicitado por: </b><br>
+                    {{preventivo.solicitado}} <br>
+                    <b>Asignado a:</b> <br>
+                    {{preventivo.responsable}} <br>
+                    <b>Supervisado por:</b> <br>
+                    {{preventivo.supervisadop}}
+                </td>
+            </tr>
+        </table>
+        <table class="table">
+            <tr>
+                <td style="font-size: small;"> <b>Área: </b> {{preventivo.equipo.area}}</td>
+                <td style="font-size: small;"> <b> Equipo: </b> {{preventivo.equipo.descripcion}}</td>
+                <td>
+                    {% if preventivo.equipo.imagen %}
+                    <img src="{{preventivo.equipo.imagen.url}}" alt="" width="30">
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td style="font-size: small;" colspan="2">
+                    <b>Actividades a realizar:</b> <br>
+                    {{preventivo.actividades | linebreaks}}
+                </td>
+                <td style="font-size: small;" colspan="2">
+                    <b>Herramientas utilizadas:</b> <br>
+                    {{preventivo.herramientas | linebreaks}}
+                </td>
+
+            </tr>
+            <tr>
+                <td style="font-size: small;" colspan="4">
+                    <b>Repuestos utilizados:</b> <br>
+                    <ul>
+                        {% for i in productos %}
+                        <li>{{i.cantidad}} {{i.producto.descripcion}} $ {{i.subtotal|intcomma}}</li>
+                        {% endfor %}
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td style="font-size: small;" colspan="2">
+                    <b>Total Mano de Obra:</b> $ {{preventivo.subtotalmo|intcomma}}
+                </td>
+                <td style="font-size: small;" colspan="2">
+                    <b>Total en Repuestos:</b> $ {{preventivo.subtotalpiezas|intcomma}}
+                </td>
+            </tr>
+            <tr>
+                <td style="font-size: small; padding-top: 50px;" class="text-center" colspan="2">
+                    ________________________________<br>
+                    Fecha de entrega:
+                </td>
+                <td style="font-size: small; padding-top: 50px;" class="text-center" colspan="2">
+                    _______________________________ <br>
+                    Supervisado por: <br>
+                    {{preventivo.solicitado}}
+                </td>
+            </tr>
+            {% comment %} <tr>
+                <td style="font-size: small; padding-top: 50px;" class="text-center" colspan="2">
+                    _______________________________ <br>
+                    Firma Realizado por: <br>
+                    {{preventivo.responsable}}
+                </td>
+                <td style="font-size: small; padding-top: 50px;" class="text-center" colspan="2">
+                    ________________________________<br>
+                    Firma Supervisado por: <br>
+                    {{preventivo.supervisadop}}
+                </td>
+            </tr> {% endcomment %}
+        </table>
+    </main>
+</body>
+
+</html>

@@ -1,0 +1,324 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load widget_tweaks %}
+{% load humanize %}
+
+{% block content %}
+
+
+<div id="MaterialesModal" class="modal bd-example-modal-lg" style="overflow: scroll;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-dark">
+                <h3 class="modal-title text-light">Agregar Repuesto</h3>
+            </div>
+            <div class="modal-body" style="overflow:scroll; max-height: 450px;">
+                <table class="table table-hover" id="myTable">
+                    <thead>
+                        <tr>
+                            <th># ID</th>
+                            <th>Código interno</th>
+                            <th>Descripción</th>
+                            <th>Costo</th>
+                            <th>Agregar</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-dark">
+                        {% for i in productos_lista %}
+                        <tr>
+                            <td>{{i.id}}</td>
+                            <td>{{i.codigo}}</td>
+                            <td>{{i.descripcion}}</td>
+                            <td>$ {{i.costo}}</td>
+                            <td>
+                                <button onclick="addProductList('{{i.id}}', '{{i.descripcion}}','{{i.costo}}')" class="btn btn-success"
+                                data-dismiss="modal" type="button">
+                                    <i class="fas fa-share-square"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer bg-dark">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cerrar
+                    <i class="fas fa-window-close"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 text-center">
+        <h3 class="text-center">{{title}}</h3>
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-danger text-center" role="alert">
+            <h5>{{ message }}</h5>
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+    <div class="col-md-4">
+        <a class="btn btn-secondary ml-2 mb-5 border border-dark" href="#MaterialesModal" data-toggle="modal"
+            data-dismiss="modal">
+            Stock de Repuestos <i class="nav-icon fas fa-boxes"></i>
+        </a>
+    </div>
+    <div class="col-md-12 pb-4 mb-4">
+        Buscar repuesto: <i class="fas fa-search-plus"></i>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control border border-secondary" placeholder="Ingrese una descripcion"
+                id="search" name="search">
+            <div class="input-group-append">
+                <button onclick="borrarContent()" class="btn btn-outline-danger" type="button"><i
+                        class="fas fa-window-close"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+<link rel="stylesheet" href="{% static 'index/css/b4.css' %}">
+<script src="{% static 'index/js/b4.js' %}"></script>
+<div class="col-md-12" style="overflow:scroll">
+    <table class="table table-hover table-secondary" id="tableProducts">
+        <thead>
+            <tr>
+                <th>Borrar</th>
+                <th>Descripción</th>
+                <th>Cantidad</th>
+                <th>Precio $</th>
+                <th>Subtotal $</th>
+            </tr>
+        </thead>
+        <tbody class="text-dark">
+        </tbody>
+    </table>
+</div>
+<div class="row mt-4">
+    <div class="col-6 text-left">
+        <button onclick="saveData()" class="btn btn-success btn-lg">Guardar cambios <i
+                class="fas fa-share-square"></i></button>
+    </div>
+    <div class="col-6 text-left">
+        <h5 class="text-danger" id="total"></h5>
+    </div>
+</div>
+
+<script>
+    var tableProducts;
+    // Verts variable
+    var verts = {
+        items: {
+            total: 0.00,
+            products: []
+        },
+        calculate: function () {
+            // Calcular subtotal 
+            calculatedTotal = 0;
+            $.each(this.items.products, function (pos, dict) {
+                calculatedTotal = parseFloat(calculatedTotal) + parseFloat(dict.subtotal);
+            });
+            this.items.total = parseFloat(calculatedTotal);
+            document.getElementById("total").innerHTML = "Subtotal piezas $" + parseFloat(this.items.total).toFixed(2)
+        },
+
+        list: function () {
+            tableProducts = $('#tableProducts').DataTable({
+                data: this.items.products,
+                columns: [
+                    { "data": "id" },
+                    { "data": "descripcion" },
+                    { "data": "cantidad" },
+                    { "data": "precio" },
+                    { "data": "subtotal" },
+                ],
+                columnDefs: [
+                    {
+                        targets: [0],
+                        class: "text-center",
+                        render: function (data, type, row) {
+                            var buttons = `<a rel="remove" class='btn btn-flat btn-outline-secondary pt-0'><img src="{% static 'index/img/delete.png' %}" alt='Error' width='30'></a>`;
+                            return buttons
+                        }
+                    },
+                    {
+                        targets: [2],
+                        class: "text-right",
+                        render: function (data, type, row) {
+                            var buttons = `<input type="number" name="cant" class="form-control text-center" value="${row.cantidad}">`;
+                            return buttons
+                        }
+                    },
+                    {
+                        targets: [3],
+                        class: "text-center",
+                        render: function (data, type, row) {
+                            return "$" + parseFloat(data).toFixed(2)
+                        }
+                    },
+                    {
+                        targets: [4],
+                        class: "text-center",
+                        render: function (data, type, row) {
+                            return "$" + parseFloat(data).toFixed(2)
+                        }
+                    },
+                ],
+                destroy: true,
+                "language": {
+                    "url": "{% static 'index/js/idiom.json' %}"
+                },
+                "lengthMenu": [[10, 25, 50], [10, 25, 50]],
+                dom: 'Bfrtip',
+                buttons: [
+                    { extend: 'csv' },
+                    { extend: 'print' },
+                ],
+                rowCallback(row, data, displayNum, displayIndex, dataIndex) {
+                    //console.log(data);
+
+                },
+            });
+        },
+
+    };
+    // Autocomplete
+    $(function () {
+        $("#search").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: window.location.pathname,
+                    type: 'POST',
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        'action': 'autocomplete',
+                        'term': request.term,
+                    },
+                    dataType: 'json',
+                }).done(function (data) {
+                    response(data);
+                }).fail(
+                    function (jqXHR, textStatus, errorThrown) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: textStatus,
+                            footer: errorThrown
+                        })
+                    }).always(
+                        function (data) {
+                        });
+            },
+            delay: 300,
+            minLength: 2,
+            select: function (event, ui) {
+                event.preventDefault();
+                console.clear();
+                producto = {
+                    id: ui.item.id,
+                    descripcion: ui.item.descripcion,
+                    cantidad: 1,
+                    precio: ui.item.costo,
+                    subtotal: ui.item.costo,
+                }
+                verts.items.products.push(producto);
+                verts.list();
+                verts.calculate();
+                $(this).val('');
+            }
+        });
+    });
+    // On ready function
+    $(document).ready(function () {
+        "{% for i in object_list %}"
+        // Llenar la tabla con los valores y datetables
+        producto = {
+            id: "{{i.producto.id}}",
+            descripcion: "{{i.producto.descripcion}}",
+            cantidad: "{{i.cantidad}}",
+            precio: "{{i.precio}}",
+            subtotal: "{{i.subtotal}}",
+        }
+        verts.items.products.push(producto);
+        "{% endfor %}"
+        verts.list();
+        verts.calculate();
+    });
+    // Gudardar datos
+    function saveData() {
+        $.ajax({
+            url: "{% url 'SaveMaterialsCorrectivo' %}",
+            type: 'POST',
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                'action': 'save',
+                'id_correctivo': "{{id_correctivo}}",
+                'verts': JSON.stringify(verts.items),
+            },
+            dataType: 'json',
+        }).done(function (data) {
+            Swal.fire({
+                icon: 'success',
+                title: '',
+                text: "Cambios guardados con éxito",
+            })
+        }).fail(
+            function (jqXHR, textStatus, errorThrown) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: textStatus,
+                    footer: errorThrown
+                })
+            }).always(
+                function (data) {
+                });
+    }
+
+    $('#tableProducts tbody')
+        // Remover item
+        .on('click', 'a[rel="remove"]', function () {
+            var tr = tableProducts.cell($(this).closest('td, li')).index();
+            verts.items.products.splice(tr.row, 1);
+            verts.list();
+            verts.calculate();
+
+        })
+        // Cambio de cantidad
+        .on('change', "input[name='cant']", function () {
+            console.clear();
+            let cant = parseInt($(this).val());
+            if (isNaN(cant)) {
+                cant = 0;
+                //$(this).val(cant);
+            }
+            var tr = tableProducts.cell($(this).closest('td, li')).index();
+            //console.log(tr);
+            //var data = tableProducts.row(tr.row).data();
+            //console.log(data);
+            verts.items.products[tr.row].cantidad = cant;
+            verts.items.products[tr.row].subtotal = parseFloat(verts.items.products[tr.row].precio) * parseFloat(cant);
+            verts.calculate();
+            verts.list();
+        })
+    
+    // Agregar desde lista 
+    function addProductList(id_producto, descripcion_producto, precio_producto){
+        producto = {
+                    id: id_producto,
+                    descripcion: descripcion_producto,
+                    cantidad: 1,
+                    precio: precio_producto,
+                    subtotal: precio_producto,
+                }
+                verts.items.products.push(producto);
+                verts.list();
+                verts.calculate();
+    };
+</script>
+
+{% endblock %}

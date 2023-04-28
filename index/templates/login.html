@@ -1,0 +1,30 @@
+{% extends "baseout.html" %}
+
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="abs-center login-page">
+    <div class="col-md-4 text-center bg-custom text-secondary">
+        <img src="{% static  'index/img/logo.png' %}" width="150" alt="Maintenance">
+        <form method="POST">{% csrf_token %}
+            {% for field in form %}
+            <p>{{field.label}}</p>
+            <p>{{field|add_class:"form-control"}}</p>
+            {% endfor %}
+            <br>
+            <button class="btn btn-info btn-block" type="submit">Iniciar sesión</button>
+        </form>
+    </div>
+</div>
+{% for error in form.non_field_errors %}
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: "{{error}}",
+        footer: "Revise sus datos e intente de nuevo por favor"
+    })
+</script>
+{% endfor %}
+{% endblock %}

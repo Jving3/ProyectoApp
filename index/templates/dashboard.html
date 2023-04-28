@@ -1,0 +1,437 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'index/css/b4.css' %}">
+<script src="{% static 'index/js/b4.js' %}"></script>
+<script src="{% static 'index/js/zingchart.js' %}"></script>
+
+<div class="row">
+    <div class="col-md-12 mt-2">
+        <h3 class="text-center"><i class="nav-icon fas fa-chart-line text-secondary"></i> Dashboard </h3>
+        <div class="card card-body" style="overflow:scroll">
+            <div class="row">
+                <input type="hidden" name="action" value="equipo">
+                <input type="hidden" name="id_equipo" id="id_equipo">
+                <div class="col-md-5">
+                    <input type="text" class="form-control border border-dark" placeholder="Ingrese una máquina"
+                        required id="search" name="search">
+                </div>
+                <div class="col-md-3">
+                    <input type="date" class="form-control border border-dark" required id="fechainicio"
+                        name="fechainicio">
+                </div>
+                <div class="col-md-3">
+                    <input type="date" class="form-control border border-dark" placeholder="Ingrese una máquina"
+                        id="fechafin" name="fechafin" required>
+                </div>
+                <div class="col-md-1">
+                    <button class="btn btn-dark btn-lg mb-4" type="button"
+                        onclick="consultData('equipo', document.getElementById('id_equipo').value)"><i
+                            class="text-white nav-icon fas fa-chart-line"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 text-right">
+        <div class="card text-white bg-dark text-center" style="max-width: 155px;">
+            <p class="card-title">
+                MTTR: <i class="fas fa-clock text-info"></i>
+            </p>
+            <p class="card-title" id="mttr">
+            </p>
+        </div>
+    </div>
+    <div class="col-md-6 text-left">
+        <div class="card text-white bg-dark text-center" style="max-width: 155px;">
+            <p class="card-title">
+                MTBF: <i class="fas fa-clock text-info"></i>
+            </p>
+            <p class="card-title" id="mtbf">
+            </p>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div id="ChartHV"></div>
+    </div>
+    <div class="col-md-6">
+        <div id="ChartP"></div>
+    </div>
+    <div class="col-md-6">
+        <div id="ChartT"></div>
+    </div>
+    <div class="col-md-6">
+        <div id="ChartHoras"></div>
+    </div>
+    <div class="col-md-12">
+        <div class="card card-body" style="overflow:scroll; max-height: 400px;">
+            <table class="table table-hover table-secondary" id="myTable">
+                <thead>
+                    <tr>
+                        <th># OT</th>
+                        <th>Fecha programada</th>
+                        <th>Fecha cierre</th>
+                        <th>Equipo</th>
+                        <th>Coste piezas $</th>
+                        <th>Coste MO $</th>
+                        <th>Horas paro</th>
+                        <th>Comprobante (PDF)</th>
+                    </tr>
+                </thead>
+                <tbody class="text-dark">
+                    {% for i in historicos %}
+                    <tr>
+                        <td>{{i.id}}</td>
+                        <td>{{i.fecha_programada}}</td>
+                        <td>{{i.fecha}}</td>
+                        <td>{{i.correctivo.equipo}}</td>
+                        <td>${{i.subtotalpiezas}}</td>
+                        <td>${{i.subtotalmo}}</td>
+                        <td>{{i.horas}}</td>
+                        {% if i.file %}
+                        <a href="{{i.file.url}}" target="_blank" rel="noopener noreferrer"> <img
+                                src="{% static 'index/img/pdf.png' %}" alt="Error" width="30"></a>
+                        {% else %}
+                        <td> <i class="fas fa-window-close text-danger"></i> <i>Sin data</i></td>
+                        {% endif %}
+
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    // Autocomplete
+    $(function () {
+        $("#search").autocomplete({
+            source: function (request, response) {
+                $.ajax({
+                    url: window.location.pathname,
+                    type: 'POST',
+                    data: {
+                        csrfmiddlewaretoken: '{{ csrf_token }}',
+                        'action': 'autocomplete',
+                        'term': request.term,
+                    },
+                    dataType: 'json',
+                }).done(function (data) {
+                    response(data);
+                }).fail(
+                    function (jqXHR, textStatus, errorThrown) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: textStatus,
+                            footer: errorThrown
+                        })
+                    }).always(
+                        function (data) {
+                        });
+            },
+            delay: 300,
+            minLength: 2,
+            select: function (event, ui) {
+                event.preventDefault();
+                console.clear();
+                $(this).val(ui.item.descripcion);
+                document.getElementById("id_equipo").value = ui.item.id
+                console.log(ui.item);
+            }
+        });
+    });
+</script>
+<script>
+
+
+    function consultData(action, id) {
+        if (action === 'equipo') {
+            if (document.getElementById("id_equipo").value == '' || document.getElementById("fechainicio").value == '' || document.getElementById("fechafin").value == '') {
+                Swal.fire({
+                    icon: 'error',
+                    title: '',
+                    text: "Datos incompletos",
+                    footer: "Favor de elegir un equipo, fecha inicio y fecha fin."
+                })
+                return
+            }
+        }
+        $.ajax({
+            url: "{% url 'Result' %}",
+            type: 'POST',
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                'action': action,
+                'id': id,
+                'fechainicio': document.getElementById("fechainicio").value,
+                'fechafin': document.getElementById("fechafin").value
+            },
+            dataType: 'json',
+        }).done(function (data) {
+            //alert("Consulta terminada")
+            buildChartHV(data["fechas"], data["subtotales"]);
+            buildChartP(data["fechas_p"], data["subtotales_p"]);
+            buildChartT(data["totales"]);
+            buildChartHoras(data["horas"]);
+            if (data["mttr"] == undefined) {
+                document.getElementById("mttr").innerText = "Sin registros.";
+            }
+            else {
+                document.getElementById("mttr").innerText = data["mttr"] +  " horas.";
+            }
+            if (data["mtbf"] == undefined) {
+                document.getElementById("mtbf").innerText = "Sin registros.";
+            }
+            else {
+                document.getElementById("mtbf").innerText = data["mtbf"] +  " horas.";
+            }
+        }).fail(
+            function (jqXHR, textStatus, errorThrown) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: textStatus,
+                    footer: errorThrown
+                })
+            }).always(
+                function (data) {
+                });
+    }
+
+
+    function buildChartHV(keys, values) {
+        let ChartDataVentas = {
+            'type': 'line',
+            'theme': 'classic',
+            'title': {
+                text: 'OT Correctivos',
+                fontSize: 15,
+            },
+            'legend': {
+                draggable: true,
+            },
+            'series': [{
+                values: values,
+                text: '$ Costes OT',
+                'line-color': 'black',
+                marker: {
+                    'background-color': "yellow"
+                }
+            },
+            ],
+            'scaleX': {
+                // Set scale label
+                label: { text: 'Fecha', fontSize: 10 },
+                labels: keys,
+            },
+            scaleY: {
+                // Scale label with unicode character
+                label: { text: '$ Costo OT', fontSize: 10 },
+                format: '$%v',
+            },
+            plotarea: {
+                'margin': "13%",
+            },
+            plot: {
+                tooltip: {
+                    text: "Fecha: %kl<br>$%v",
+                    'background-color': 'black',
+                }
+            },
+            /*
+            plot: {    
+                animation: {
+                    effect: '1', 
+                    delay: '5000',
+                    speed: 400
+                }
+            }
+            */
+        }
+        zingchart.render(
+            {
+                id: 'ChartHV',
+                data: ChartDataVentas,
+            }
+        )
+    }
+
+
+    function buildChartP(keys, values) {
+        let ChartDataP = {
+            'type': 'line',
+            'theme': 'classic',
+            'title': {
+                text: 'OT Preventivos',
+                fontSize: 15,
+            },
+            'legend': {
+                draggable: true,
+            },
+            'series': [{
+                values: values,
+                text: '$ Costes OT',
+                'line-color': 'blank',
+                marker: {
+                    'background-color': "blue"
+                }
+            },
+            ],
+            'scaleX': {
+                // Set scale label
+                label: { text: 'Fecha', fontSize: 10 },
+                labels: keys,
+            },
+            scaleY: {
+                // Scale label with unicode character
+                label: { text: '$ Costo OT', fontSize: 10 },
+                format: '$%v',
+            },
+            plotarea: {
+                'margin': "13%",
+            },
+            plot: {
+                tooltip: {
+                    text: "Fecha: %kl<br>$%v",
+                    'background-color': 'black',
+                }
+            },
+            /*
+            plot: {    
+                animation: {
+                    effect: '1', 
+                    delay: '5000',
+                    speed: 400
+                }
+            }
+            */
+        }
+        zingchart.render(
+            {
+                id: 'ChartP',
+                data: ChartDataP,
+            }
+        )
+    }
+
+    function buildChartT(values) {
+        let ChartDataT = {
+            'type': 'bar',
+            'theme': 'classic',
+            'title': {
+                text: 'Totales $ OT',
+                fontSize: 15,
+            },
+            'legend': {
+                draggable: true,
+            },
+            'series': [{
+                values: values,
+                text: '$ Costes Totales',
+                'line-color': 'blank',
+                marker: {
+                    'background-color': "blue"
+                }
+            },
+            ],
+            'scaleX': {
+                // Set scale label
+                label: { text: 'Tipo de OT', fontSize: 10 },
+                labels: ["$ Total OT Correctivos", "$ Total OT Preventivos"],
+            },
+            scaleY: {
+                // Scale label with unicode character
+                label: { text: '$ Costo Total', fontSize: 10 },
+                format: '$%v',
+            },
+            plotarea: {
+                'margin': "13%",
+            },
+            plot: {
+                tooltip: {
+                    text: "Fecha: %kl<br>$%v",
+                    'background-color': 'black',
+                }
+            },
+            /*
+            plot: {    
+                animation: {
+                    effect: '1', 
+                    delay: '5000',
+                    speed: 400
+                }
+            }
+            */
+        }
+        zingchart.render(
+            {
+                id: 'ChartT',
+                data: ChartDataT,
+            }
+        )
+    }
+
+    function buildChartHoras(values) {
+        let ChartDataHoras = {
+            'type': 'bar',
+            'theme': 'classic',
+            'title': {
+                text: 'Pérdida de horas (Paro)',
+                fontSize: 15,
+            },
+            'legend': {
+                draggable: true,
+            },
+            'series': [{
+                values: values,
+                text: 'Horas de paro',
+                'line-color': 'blank',
+                marker: {
+                    'background-color': "blue"
+                }
+            },
+            ],
+            'scaleX': {
+                // Set scale label
+                label: { text: 'Tipo de OT', fontSize: 10 },
+                labels: ["Total horas de paro OT Correctivos", "Total horas de paro OT Preventivos"],
+            },
+            scaleY: {
+                // Scale label with unicode character
+                label: { text: 'Horas perdidas', fontSize: 10 },
+                format: '%v horas',
+            },
+            plotarea: {
+                'margin': "13%",
+            },
+            plot: {
+                tooltip: {
+                    text: "%kl<br>%v horas",
+                    'background-color': 'black',
+                }
+            },
+            /*
+            plot: {    
+                animation: {
+                    effect: '1', 
+                    delay: '5000',
+                    speed: 400
+                }
+            }
+            */
+        }
+        zingchart.render(
+            {
+                id: 'ChartHoras',
+                data: ChartDataHoras,
+            }
+        )
+    }
+
+</script>
+
+{% endblock %}

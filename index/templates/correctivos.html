@@ -1,0 +1,540 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+
+<div id="HerramientasModal" class="modal bd-example-modal-lg" style="overflow: scroll;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-dark">
+                <h3 class="modal-title text-light">Herramientas</h3>
+            </div>
+            <div class="modal-body" style="overflow:scroll; max-height: 450px;">
+                <input type="hidden" id="herramientas" name="herramientas">
+                <table class="table table-secondary" id="table2">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Código interno</th>
+                            <th>Descripción</th>
+                            <th>Comentarios</th>
+                            <th>¿Utilizado?</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-dark">
+                        {% for i in herramientas %}
+                        <tr>
+                            <td>{{i.id}}</td>
+                            <td>{{i.codigo}}</td>
+                            <td>{{i.descripcion}}</td>
+                            <td>{{i.comentarios}}</td>
+                            <td><input type="checkbox" name="entregado" class="form-control text-center"
+                                    value="{{i.id}}"></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="mb-2 text-center">
+                <button onclick="saveMat()" class="btn btn-success btn-lg">Guardar cambios <i
+                        class="fas fa-share-square"></i></button>
+            </div>
+            <div class="modal-footer bg-dark">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cerrar
+                    <i class="fas fa-window-close"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="HistorialModal" class="modal bd-example-modal-lg" style="overflow: scroll;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-dark">
+                <h3 class="modal-title text-light">OT realizada</h3>
+            </div>
+            <div class="modal-body bg-dark text-white">
+                <form method="POST" enctype="multipart/form-data" action="{% url 'AddHistorialCorrectivo' %}">
+                    {%csrf_token %}
+                    <div class="row">
+                        <div class="col-md-5">
+                            <p>
+                                {{form_historial.fecha_programada.label}}
+                                {{form_historial.fecha_programada|add_class:"form-control font-weight-normal text-dark"}}</p>
+                        </div>
+                        <div class="col-md-5">
+                            <p>
+                                {{form_historial.fecha.label}}
+                                {{form_historial.fecha|add_class:"form-control font-weight-normal text-dark"}}</p>
+                        </div>
+                        <div class="col-md-2">
+                            <p>
+                                {{form_historial.correctivo.label}}
+                                {{form_historial.correctivo |add_class:"form-control font-weight-normal text-dark"}}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p>
+                                {{form_historial.subtotalmo.label}}
+                                {{form_historial.subtotalmo|add_class:"form-control font-weight-normal text-dark"}}</p>
+                        </div>
+                        <div class="col-md-5">
+                            <p>
+                                {{form_historial.subtotalpiezas.label}}
+                                {{form_historial.subtotalpiezas|add_class:"form-control font-weight-normal text-dark"}}
+                            </p>
+                        </div>
+                        <div class="col-md-3">
+                            <p>
+                                {{form_historial.horas.label}}
+                                {{form_historial.horas|add_class:"form-control"}}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p>
+                                {{form_historial.solicitadohc.label}}
+                                {{form_historial.solicitadohc|add_class:"form-control"}}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p>
+                                {{form_historial.responsablehc.label}}
+                                {{form_historial.responsablehc|add_class:"form-control"}}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p>
+                                {{form_historial.supervisadohc.label}}
+                                {{form_historial.supervisadohc|add_class:"form-control"}}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p>
+                                {{form_historial.file.label}}
+                                {{form_historial.file|add_class:"form-control"}}</p>
+                        </div>
+                    </div>
+            </div>
+            <div class="modal-footer bg-dark">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cancelar
+                    <i class="fas fa-window-close"></i>
+                </button>
+                <button type="submit" class="btn btn-success">
+                    Guardar
+                    <i class="fas fa-share-square"></i>
+                </button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div id="AgregarOrdenModal" class="modal bd-example-modal-lg" style="overflow: scroll;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-dark">
+                <h3 class="modal-title text-light">Agregar OT</h3>
+            </div>
+            <div class="modal-body bg-dark text-white">
+                <form method="POST" enctype="multipart/form-data" action="{% url 'AddCorrectivo' %}">{% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p>
+                                {{form_add.fecha.label}}
+                                {{form_add.fecha|add_class:"form-control font-weight-normal text-dark"}}</p>
+                        </div>
+                        <div class="col-md-9">
+                            <p>
+                                {{form_add.equipo.label}}
+                                {{form_add.equipo|add_class:"form-control font-weight-normal text-dark"}}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p>
+                                {{form_add.solicitadoc.label}}
+                                {{form_add.solicitadoc|add_class:"form-control font-weight-normal text-dark"}}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p>
+                                {{form_add.responsablec.label}}
+                                {{form_add.responsablec|add_class:"form-control"}}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p>
+                                {{form_add.supervisadoc.label}}
+                                {{form_add.supervisadoc|add_class:"form-control"}}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p>
+                                {{form_add.falla.label}}
+                                {{form_add.falla|add_class:"form-control"}}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p>
+                                {{form_add.actividades.label}}
+                                {{form_add.actividades|add_class:"form-control"}}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p>
+                                {{form_add.estado.label}}
+                                {{form_add.estado|add_class:"form-control"}}</p>
+                        </div>
+                        <div class="col-md-5">
+                            <p>
+                                {{form_add.file.label}}
+                                {{form_add.file|add_class:"form-control"}}</p>
+                        </div>
+                        <div class="col-md-3">
+                            <p>
+                                {{form_add.subtotalmo.label}}
+                                {{form_add.subtotalmo|add_class:"form-control"}}</p>
+                        </div>
+                    </div>
+            </div>
+            <div class="modal-footer bg-dark">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cancelar
+                    <i class="fas fa-window-close"></i>
+                </button>
+                <button type="submit" class="btn btn-success">
+                    Agregar
+                    <i class="fas fa-share-square"></i>
+                </button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div id="EditarOrdenModal" class="modal bd-example-modal-lg" style="overflow: scroll;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-info">
+                <h3 class="modal-title text-dark">Editar OT</h3>
+            </div>
+            <div class="modal-body bg-dark text-white">
+                <form method="POST" enctype="multipart/form-data" action="{% url 'EditCorrectivo' %}">{% csrf_token %}
+                    <input type="hidden" id="id_correctivo_editar" name="id_correctivo_editar">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p>
+                                {{form_editar.fecha.label}}
+                                {{form_editar.fecha|add_class:"form-control font-weight-normal text-dark"}}</p>
+                        </div>
+                        <div class="col-md-9">
+                            <p>
+                                {{form_editar.equipo.label}}
+                                {{form_editar.equipo|add_class:"form-control font-weight-normal text-dark"}}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p>
+                                {{form_editar.solicitadoc.label}}
+                                {{form_editar.solicitadoc|add_class:"form-control font-weight-normal text-dark"}}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p>
+                                {{form_editar.responsablec.label}}
+                                {{form_editar.responsablec|add_class:"form-control"}}</p>
+                        </div>
+                        <div class="col-md-4">
+                            <p>
+                                {{form_editar.supervisadoc.label}}
+                                {{form_editar.supervisadoc|add_class:"form-control"}}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p>
+                                {{form_editar.falla.label}}
+                                {{form_editar.falla|add_class:"form-control"}}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p>
+                                {{form_editar.actividades.label}}
+                                {{form_editar.actividades|add_class:"form-control"}}</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p>
+                                {{form_editar.estado.label}}
+                                {{form_editar.estado|add_class:"form-control"}}</p>
+                        </div>
+                        <div class="col-md-5">
+                            <p>
+                                {{form_editar.file.label}}
+                                {{form_editar.file|add_class:"form-control"}}</p>
+                        </div>
+                        <div class="col-md-3">
+                            <p>
+                                {{form_editar.subtotalmo.label}}
+                                {{form_editar.subtotalmo|add_class:"form-control"}}</p>
+                        </div>
+                    </div>
+            </div>
+            <div class="modal-footer bg-dark">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cancelar
+                    <i class="fas fa-window-close"></i>
+                </button>
+                <button type="submit" class="btn btn-success">
+                    Guardar
+                    <i class="fas fa-share-square"></i>
+                </button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div id="EliminarOrdenModal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-info">
+                <h5 class="modal-title text-dark">Eliminar Orden</h5>
+            </div>
+            <div class="modal-body bg-dark text-white">
+                <p class="labelmodal">¿Estás seguro?</p>
+                <form method="POST" action="{% url 'DeleteCorrectivo' %}">{% csrf_token %}
+                    <input type="hidden" id="id_correctivo_eliminar" name="id_correctivo_eliminar">
+            </div>
+            <div class="modal-footer bg-dark text-white">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Volver
+                </button>
+                <button type="submit" class="btn btn-success">
+                    Aceptar
+                </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12 text-center mt-2">
+        <h3 class="text-center"><i class="nav-icon fas fa-tachometer-alt text-secondary"></i> Correctivos </h3>
+    </div>
+    <div class="col-md-4">
+        <a class="btn btn-success ml-2 mb-5 border border-dark" href="#AgregarOrdenModal" data-toggle="modal"
+            data-dismiss="modal">
+            Agregar OT <i class="fas fa-plus-circle"></i>
+        </a>
+    </div>
+</div>
+<div class="marca">
+    <div class="row">
+        <div class="col-md-2 text-center">
+            <div class="card text-white bg-dark text-center" style="max-width: 155px;">
+                <p class="card-title">
+                    <i class="fas fa-clock text-info"></i> Programado
+                </p>
+                <p class="card-title">
+                    {{num_programado}}
+                </p>
+            </div>
+        </div>
+        <div class="col-md-2 text-center">
+            <div class="card text-white bg-dark text-center" style="max-width: 155px;">
+                <p class="card-title">
+                    <i class="fas fa-exclamation-triangle text-warning"></i> En espera 
+                </p>
+                <p class="card-title">
+                    {{num_espera}}
+                </p>
+            </div>
+        </div>
+        <div class="col-md-2 text-center">
+            <div class="card text-white bg-dark text-center" style="max-width: 150px;">
+                <p class="card-title">
+                    <i class="fas fa-arrow-circle-right text-white"></i> En proceso 
+                </p>
+                <p class="card-title">
+                    {{num_proceso}}
+                </p>
+            </div>
+        </div>
+        <div class="col-md-2 text-center">
+            <div class="card text-white bg-dark text-center" style="max-width: 150px;">
+                <p class="card-title">
+                    <i class="fas fa-exclamation-triangle text-danger"></i> Atrasado 
+                </p>
+                <p class="card-title">
+                    {{num_atrasado}}
+                </p>
+            </div>
+        </div>
+        <div class="col-md-2 text-center">
+            <div class="card text-white bg-dark text-center" style="max-width: 150px;">
+                <p class="card-title">
+                    <i class="fas fa-clipboard-check text-success"></i> Realizado 
+                </p>
+                <p class="card-title">
+                    {{num_realizado}}
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+<link rel="stylesheet" href="{% static 'index/css/b4.css' %}">
+<script src="{% static 'index/js/b4.js' %}"></script>
+<div class="col-md-12" style="overflow:scroll">
+    <table class="table table-hover table-secondary" id="myTable">
+        <thead>
+            <tr>
+                <th># OT</th>
+                <th>Equipo</th>
+                <th>Fecha</th>
+                <th>Estado</th>
+                <th>Opciones</th>
+                <th style="display: none;">Actividades</th>
+                <th style="display: none;">Fecha Formato</th>
+                <th style="display: none;">Falla</th>
+            </tr>
+        </thead>
+        <tbody class="text-dark">
+            {% for i in correctivos %}
+            <tr>
+                <td>{{i.id}}</td>
+                <td>{{i.equipo}}</td>
+                <td>{{i.fecha}}</td>
+                {% if i.estado == 'Programado' %}
+                <td>
+                    {{i.estado}}
+                    <i class="fas fa-clock text-info"></i>
+                </td>
+                {% elif i.estado == 'En espera' %}
+                <td>
+                    {{i.estado}}
+                    <i class="fas fa-exclamation-triangle text-warning"></i>
+                </td>
+                {% elif i.estado == 'En proceso' %}
+                <td>
+                    {{i.estado}}
+                    <i class="fas fa-arrow-circle-right text-dark"></i>
+                </td>
+                {% elif i.estado == 'Atrasado' %}
+                <td>
+                    {{i.estado}}
+                    <i class="fas fa-exclamation-triangle text-danger"></i>
+                </td>
+                {% elif i.estado == 'Realizado' %}
+                <td>
+                    {{i.estado}}
+                    <i class="fas fa-clipboard-check text-success"></i>
+                </td>
+                {% endif %}
+                <td>
+                    <button class="btn btn-dark-outline btn-sm" title="Ver PDF">
+                        <a href="{% url 'ExportPDFCorrectivo' %}{{i.id}}" target="_blank" rel="noopener noreferrer">
+                            <img src="{% static 'index/img/pdf.png' %}" alt="Error" width="50">
+                        </a>
+                    </button>
+                    <button onclick="actHerramientas('{{i.id}}')" class="btn btn-dark-outline btn-sm"
+                        title="Consultar Herramientas">
+                        <a href="#HerramientasModal" data-toggle="modal" data-dismiss="modal"> <img
+                                src="{% static 'index/img/maintenance.png' %}" alt="Error" width="40"></a>
+                    </button>
+                    <button
+                        onclick="historialCorrectivo('{{i.id}}','{{i.solicitadoc.id}}','{{i.supervisadoc.id}}','{{i.responsablec.id}}','{{i.subtotalpiezas}}', '{{i.subtotalmo}}',document.getElementById('{{i.id}}-fecha').innerHTML)"
+                        class="btn btn-dark-outline btn-sm" data-toggle="modal" href="#HistorialModal"
+                        title="Agregar Historial"><img src="{% static 'index/img/si.png' %}" alt="Error"
+                            width="50"></button>
+                    <button class="btn btn-dark-outline btn-sm" title="Ver Materiales">
+                        <a href="{% url 'MCorrectivo' %}{{i.id}}" rel="noopener noreferrer">
+                            <img src="{% static 'index/img/entradas.png' %}" alt="Error" width="35">
+                        </a>
+                    </button>
+                    <button
+                        onclick="editarCorrectivo('{{i.id}}','{{i.equipo.id}}', document.getElementById('{{i.id}}-fecha').innerHTML ,'{{i.solicitadoc.id}}', '{{i.estado}}','{{i.responsablec.id}}', document.getElementById('{{i.id}}-actividades').innerHTML, '{{i.subtotalmo}}', '{{i.supervisadoc.id}}',document.getElementById('{{i.id}}-falla').innerHTML)"
+                        class="btn btn-dark-outline btn-sm" data-toggle="modal" href="#EditarOrdenModal"
+                        title="Editar"><img src="{% static 'index/img/editar.png' %}" alt="Error" width="35"></button>
+                    <button onclick="eliminarCorrectivo('{{i.id}}')" class="btn btn-dark-outline btn-sm"
+                        data-toggle="modal" href="#EliminarOrdenModal" title="Eliminar"><img
+                            src="{% static 'index/img/delete.png' %}" alt="Error" width="25"></button>
+                </td>
+                <th style="display: none;" id="{{i.id}}-actividades">{{i.actividades}}</th>
+                <th style="display: none;" id="{{i.id}}-fecha">{{ i.fecha|date:"Y-m-d" }}</th>
+                <th style="display: none;" id="{{i.id}}-falla">{{i.falla}}</th>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% if messages %}
+{% for message in messages %}
+<script>
+    Swal.fire({
+        icon: 'error',
+        title: 'Error...',
+        text: "{{message}}",
+        footer: "Revise sus datos e intente de nuevo por favor"
+    })
+</script>
+{% endfor %}
+{% endif %}
+
+<script>
+    function actHerramientas(id) {
+        document.getElementById("herramientas").value = id;
+    }
+
+    function saveMat() {
+        var herramientas = [];
+        console.clear();
+        var checkboxes = document.getElementsByName('entregado');
+        //console.log(checkboxes);
+         
+        for (var checkbox of checkboxes) {
+            if (checkbox.checked) {
+                herramientas.push(checkbox.value);
+            }
+        }
+        //console.log(herramientas);
+        if (herramientas.length < 1){
+            //alert("No hay datos");
+            return;
+        }  
+        
+        $.ajax({
+            url: "{% url 'UpdateEntregados' %}",
+            type: 'POST',
+            data: {
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                'herramientas': JSON.stringify(herramientas),
+                'correctivo': document.getElementById("herramientas").value,
+                'action': 'correctivos'
+            },
+            dataType: 'json',
+        }).done(function (data) {
+            console.clear();
+            Swal.fire({
+                icon: 'success',
+                title: 'Confirmación',
+                text: "Actualizado con éxito",
+            })
+        }).fail(
+            function (jqXHR, textStatus, errorThrown) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: textStatus,
+                    footer: errorThrown
+                })
+            }).always(
+                function (data) {
+                });
+    }
+
+</script>
+
+{% endblock %}

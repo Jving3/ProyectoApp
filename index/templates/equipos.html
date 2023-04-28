@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+
+{% load static %}
+{% load widget_tweaks %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'index/css/b4.css' %}">
+<script src="{% static 'index/js/b4.js' %}"></script>
+
+
+<div id="AgregarEquipoModal" class="modal" style="overflow: scroll;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-dark">
+                <h3 class="modal-title text-light">Agregar nuevo equipo</h3>
+            </div>
+            <div class="modal-body bg-dark text-white">
+                <form method="POST" action="{% url 'AddEquipo' %}" enctype="multipart/form-data">{% csrf_token %}
+                    {% for field in form_equipo %}
+                    <p>{{field.label}}</p>
+                    <p>{{field|add_class:"form-control font-weight-normal text-dark"}}</p>
+                    {% for error in field.errors %}
+                    <p class="alarma">{{error}}</p>
+                    {% endfor %}
+                    {% endfor %}
+                    {% for error in form_equipo.non_field_errors %}
+                    <p class="alarma">{{error}}</p>
+                    {% endfor %}
+            </div>
+            <div class="modal-footer bg-dark">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn btn-success">
+                    Agregar
+                </button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="EditarEquipoModal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-dark">
+                <h4 class="modal-title text-light">Editar equipo</h4>
+            </div>
+            <div class="modal-body bg-dark text-white">
+                <form method="POST" action="{% url 'EditEquipo' %}" enctype="multipart/form-data">{% csrf_token %}
+                    <input type="hidden" id="id_equipo_editar" name="id_equipo_editar">
+                    {% for field in form_editar_equipo %}
+                    <p>{{field.label}}</p>
+                    <p>{{field|add_class:"form-control"}}</p>
+                    {% for error in field.errors %}
+                    <p class="alarma">{{error}}</p>
+                    {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                    <p class="alarma">{{error}}</p>
+                    {% endfor %}
+            </div>
+            <div class="modal-footer bg-dark text-white">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Volver
+                </button>
+                <button type="submit" class="btn btn-success">
+                   Aceptar
+                </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="EliminarEquipoModal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-dark">
+                <h4 class="modal-title text-light">Eliminar Equipo</h4>
+            </div>
+            <div class="modal-body bg-dark text-white">
+                <p class="labelmodal">¿Estás seguro?</p>
+                <form method="POST" action="{% url 'DeleteEquipo' %}">{% csrf_token %}
+                    <input type="hidden" id="id_equipo_eliminar" name="id_equipo_eliminar">
+            </div>
+            <div class="modal-footer bg-dark text-white">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Volver
+                </button>
+                <button type="submit" class="btn btn-success">
+                    Aceptar
+                </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="AgregarAreaModal" class="modal" style="overflow: scroll;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-dark">
+                <h3 class="modal-title text-light">Agregar nueva área</h3>
+            </div>
+            <div class="modal-body bg-dark text-white">
+                <form method="POST" action="{% url 'AddArea' %}">{% csrf_token %}
+                    {% for field in form_area %}
+                    <p>{{field.label}}</p>
+                    <p>{{field|add_class:"form-control font-weight-normal text-dark"}}</p>
+                    {% for error in field.errors %}
+                    <p class="alarma">{{error}}</p>
+                    {% endfor %}
+                    {% endfor %}
+                    {% for error in form_area.non_field_errors %}
+                    <p class="alarma">{{error}}</p>
+                    {% endfor %}
+            </div>
+            <div class="modal-footer bg-dark">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                    Cancelar
+                </button>
+                <button type="submit" class="btn btn-success">
+                    Agregar
+                </button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="EliminarAreaModal" class="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-dark">
+                <h4 class="modal-title text-light">Eliminar Área</h4>
+            </div>
+            <div class="modal-body bg-dark text-white">
+                <p class="labelmodal">¿Estás seguro?</p>
+                <form method="POST" action="{% url 'DeleteArea' %}">{% csrf_token %}
+                    <input type="hidden" id="id_area_eliminar" name="id_area_eliminar">
+            </div>
+            <div class="modal-footer bg-dark text-white">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">
+                   Volver
+                </button>
+                <button type="submit" class="btn btn-success">
+                   Aceptar
+                </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12 mt-2">
+        <h3 class="text-center"><i class="text-secondary nav-icon fas fa-industry"></i> Áreas y Equipos </h3>
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-warning text-center" role="alert">
+            {{message}}
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <a href="#AgregarAreaModal" data-toggle="modal"
+            data-dismiss="modal">
+            <button class="btn btn-success">
+                Agregar área
+                <i class="fas fa-plus-circle"></i>
+            </button>
+        </a>
+        <div class="card card-body" style="overflow:scroll">
+            <table class="table table-hover table-secondary" id="table2">
+                <thead>
+                    <tr>
+                        <th>Área</th>
+                        <th>¿Eliminar?</th>
+                    </tr>
+                </thead>
+                <tbody class="text-dark">
+                    {% for i in areas %}
+                    <tr>
+                        <td>{{i.nombre}}</td>
+                        <td>
+                           
+                            <button onclick="eliminarArea('{{i.id}}')" class="btn btn-dark-outline btn-sm"
+                                data-toggle="modal" href="#EliminarAreaModal"><img
+                                    src="{% static 'index/img/delete.png' %}" alt="Error" width="25"></button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <a href="#AgregarEquipoModal" data-toggle="modal"
+            data-dismiss="modal">
+            <button class="btn btn-success">
+                Agregar equipo
+                <i class="fas fa-plus-circle"></i>
+            </button>
+        </a>
+        <div class="card card-body" style="overflow:scroll">
+            <table class="table table-hover table-secondary" id="table3">
+                <thead>
+                    <tr>
+                        <th>Área</th>
+                        <th>Código</th>
+                        <th>Descripción</th>
+                        <th>Imagen</th>
+                        <th>Opciones</th>
+                    </tr>
+                </thead>
+                <tbody class="text-dark">
+                    {% for i in equipos %}
+                    <tr>
+                        <td>{{i.area}}</td>
+                        <td>{{i.codigo}}</td>
+                        <td>{{i.descripcion}}</td>
+                        {% if i.imagen %}
+                        <td><img width="100" src="{{i.imagen.url}}" alt="equipo-{{i.id}}"></td>
+                        {% else %}
+                        <td></td>
+                        {% endif %}
+                        <td>
+                            <button
+                                onclick="editarEquipo('{{i.id}}','{{i.area.id}}', '{{i.codigo}}', '{{i.descripcion}}')"
+                                class="btn btn-dark-outline btn-sm" data-toggle="modal" href="#EditarEquipoModal"><img
+                                    src="{% static 'index/img/editar.png' %}" alt="Editar Equipo" width="30"></button>
+                            <button onclick="eliminarEquipo('{{i.id}}')" class="btn btn-dark-outline btn-sm"
+                                data-toggle="modal" href="#EliminarEquipoModal"><img
+                                    src="{% static 'index/img/delete.png' %}" alt="Error" width="25"></button>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
