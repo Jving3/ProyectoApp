@@ -43,13 +43,13 @@ table, th, td {
  }
  body {
     font-family: Arial, Helvetica, sans-serif !important;
-    background: #fff url('../img/robo1.jpg');
+    background: #fff url('../img/robotica2.jpeg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
     background-repeat: no-repeat;
     background-color: 100, 100, 100;
-    background-blend-mode: soft-light;
+    background-blend-mode: overlay;
  }
 
  textarea{
@@ -61,32 +61,12 @@ table, th, td {
    
 }
 
-.bg-custom {
-   background: #bdc3c7;  /* fallback for old browsers */
-   background: -webkit-linear-gradient(to top, #2c3e50, #bdc3c7);  /* Chrome 10-25, Safari 5.1-6 */
-   background: linear-gradient(to top, #2c3e50, #bdc3c7); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-
+.login-custom {
+   background: rgba(255, 255, 255, 0.8);
    width: 360px;
    height: min-content;
    padding: 20px;
    border-radius: 12px;
-   
-}
-
-.bg-custom form input[type="submit"] {
-   font-size: 20px;
-   margin-top: 15px;
-}
-
-.bg-custom h1 {
-   font-size: 36px;
-   margin-bottom: 25px;
-}
-
-.bg-custom form {
-   font-size: 20px;
-}
-
-.bg-custom form .form-group {
-   margin-bottom: 12px;
+   color: #343a40;
+   font-style: oblique;
 }

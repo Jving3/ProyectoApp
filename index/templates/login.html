@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="abs-center login-page">
-    <div class="col-md-4 text-center bg-custom text-secondary">
+    <div class="col-md-4 text-center login-custom">
         <img src="{% static  'index/img/logo.png' %}" width="150" alt="Maintenance">
         <form method="POST">{% csrf_token %}
             {% for field in form %}
@@ -13,7 +13,7 @@
             <p>{{field|add_class:"form-control"}}</p>
             {% endfor %}
             <br>
-            <button class="btn btn-info btn-block" type="submit">Iniciar sesión</button>
+            <button class="btn btn-info btn-block text-uppercase" type="submit">Iniciar sesión</button>
         </form>
     </div>
 </div>
