@@ -61,7 +61,7 @@ table, th, td {
 }
 
 .login-custom {
-   background: rgba(242, 246, 250, .8);
+   background: rgba(255, 255, 255, .85);
    width: 360px;
    height: min-content;
    padding: 20px;
