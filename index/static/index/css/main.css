@@ -43,13 +43,12 @@ table, th, td {
  }
  body {
     font-family: Arial, Helvetica, sans-serif !important;
-    background: #fff url('../img/robotica2.jpeg');
+    background: #fff url('../img/robotica.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
     background-repeat: no-repeat;
-    background-color: 100, 100, 100;
-    background-blend-mode: overlay;
+    background-blend-mode: soft-light;
  }
 
  textarea{
@@ -62,11 +61,11 @@ table, th, td {
 }
 
 .login-custom {
-   background: rgba(255, 255, 255, 0.8);
+   background: rgba(255, 255, 255, 0.9);
    width: 360px;
    height: min-content;
    padding: 20px;
    border-radius: 12px;
    color: #343a40;
-   font-style: oblique;
+   font-style: normal;
 }
