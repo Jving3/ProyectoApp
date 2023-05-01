@@ -72,12 +72,12 @@
                 <thead>
                     <tr>
                         <th># OT</th>
-                        <th>Fecha programada</th>
-                        <th>Fecha cierre</th>
+                        <th>Fecha Programada</th>
+                        <th>Fecha Cierre</th>
                         <th>Equipo</th>
-                        <th>Coste piezas $</th>
-                        <th>Coste MO $</th>
-                        <th>Horas paro</th>
+                        <th>Costo por Repuestos</th>
+                        <th>Costo de M.O.</th>
+                        <th>Tiempo Muerto</th>
                         <th>Comprobante (PDF)</th>
                     </tr>
                 </thead>
@@ -323,7 +323,7 @@
             'type': 'bar',
             'theme': 'classic',
             'title': {
-                text: 'Totales $ OT',
+                text: 'Costos Totales por Mantención',
                 fontSize: 15,
             },
             'legend': {
@@ -331,7 +331,7 @@
             },
             'series': [{
                 values: values,
-                text: '$ Costes Totales',
+                text: '$ Costos Totales',
                 'line-color': 'blank',
                 marker: {
                     'background-color': "blue"
@@ -340,8 +340,8 @@
             ],
             'scaleX': {
                 // Set scale label
-                label: { text: 'Tipo de OT', fontSize: 10 },
-                labels: ["$ Total OT Correctivos", "$ Total OT Preventivos"],
+                label: { text: 'Tipo de Mantención', fontSize: 10 },
+                labels: ["Costo Total Correctivos", "Costo Total Preventivos"],
             },
             scaleY: {
                 // Scale label with unicode character
@@ -380,7 +380,7 @@
             'type': 'bar',
             'theme': 'classic',
             'title': {
-                text: 'Pérdida de horas (Paro)',
+                text: 'Pérdida de Horas de Operación',
                 fontSize: 15,
             },
             'legend': {
@@ -388,7 +388,7 @@
             },
             'series': [{
                 values: values,
-                text: 'Horas de paro',
+                text: 'Horas de Servicio',
                 'line-color': 'blank',
                 marker: {
                     'background-color': "blue"
@@ -397,8 +397,8 @@
             ],
             'scaleX': {
                 // Set scale label
-                label: { text: 'Tipo de OT', fontSize: 10 },
-                labels: ["Total horas de paro OT Correctivos", "Total horas de paro OT Preventivos"],
+                label: { text: 'Tipo de Mantención', fontSize: 10 },
+                labels: ["Horas de Servicio No Programado", "Horas de Servicio Programado"],
             },
             scaleY: {
                 // Scale label with unicode character
