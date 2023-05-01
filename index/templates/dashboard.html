@@ -206,7 +206,7 @@
     function buildChartHV(keys, values) {
         let ChartDataVentas = {
             'type': 'line',
-            'theme': 'classic',
+            'theme': 'light',
             'title': {
                 text: 'OT Correctivos',
                 fontSize: 15,
@@ -264,7 +264,7 @@
     function buildChartP(keys, values) {
         let ChartDataP = {
             'type': 'line',
-            'theme': 'classic',
+            'theme': 'light',
             'title': {
                 text: 'OT Preventivos',
                 fontSize: 15,
@@ -321,7 +321,7 @@
     function buildChartT(values) {
         let ChartDataT = {
             'type': 'bar',
-            'theme': 'classic',
+            'theme': 'light',
             'title': {
                 text: 'Costos Totales por Mantención',
                 fontSize: 15,
@@ -331,7 +331,7 @@
             },
             'series': [{
                 values: values,
-                text: '$ Costos Totales',
+                text: '$ Costo Total',
                 'line-color': 'blank',
                 marker: {
                     'background-color': "blue"
@@ -341,11 +341,11 @@
             'scaleX': {
                 // Set scale label
                 label: { text: 'Tipo de Mantención', fontSize: 10 },
-                labels: ["Costo Total Correctivos", "Costo Total Preventivos"],
+                labels: ["Mantenciones Correctivas", "Mantenciones Preventivas"],
             },
             scaleY: {
                 // Scale label with unicode character
-                label: { text: '$ Costo Total', fontSize: 10 },
+                label: { text: '$ Costos', fontSize: 10 },
                 format: '$%v',
             },
             plotarea: {
@@ -378,9 +378,9 @@
     function buildChartHoras(values) {
         let ChartDataHoras = {
             'type': 'bar',
-            'theme': 'classic',
+            'theme': 'light',
             'title': {
-                text: 'Pérdida de Horas de Operación',
+                text: 'Pérdida de Tiempo Operacional',
                 fontSize: 15,
             },
             'legend': {
@@ -388,7 +388,7 @@
             },
             'series': [{
                 values: values,
-                text: 'Horas de Servicio',
+                text: 'Tiempo Muerto',
                 'line-color': 'blank',
                 marker: {
                     'background-color': "blue"
@@ -398,11 +398,11 @@
             'scaleX': {
                 // Set scale label
                 label: { text: 'Tipo de Mantención', fontSize: 10 },
-                labels: ["Horas de Servicio No Programado", "Horas de Servicio Programado"],
+                labels: ["Mantenciones No Programadas", "Mantenciones Programadas"],
             },
             scaleY: {
                 // Scale label with unicode character
-                label: { text: 'Horas perdidas', fontSize: 10 },
+                label: { text: 'Horas de Inactividad', fontSize: 10 },
                 format: '%v horas',
             },
             plotarea: {
