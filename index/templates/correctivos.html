@@ -440,16 +440,16 @@
                         </a>
                     </button>
                     <button onclick="actHerramientas('{{i.id}}')" class="btn btn-dark-outline btn-sm"
-                        title="Consultar Herramientas">
+                        title="Ver Herramientas">
                         <a href="#HerramientasModal" data-toggle="modal" data-dismiss="modal"> <img
                                 src="{% static 'index/img/maintenance.png' %}" alt="Error" width="40"></a>
                     </button>
                     <button
                         onclick="historialCorrectivo('{{i.id}}','{{i.solicitadoc.id}}','{{i.supervisadoc.id}}','{{i.responsablec.id}}','{{i.subtotalpiezas}}', '{{i.subtotalmo}}',document.getElementById('{{i.id}}-fecha').innerHTML)"
                         class="btn btn-dark-outline btn-sm" data-toggle="modal" href="#HistorialModal"
-                        title="Agregar Historial"><img src="{% static 'index/img/si.png' %}" alt="Error"
+                        title="Realizar"><img src="{% static 'index/img/si.png' %}" alt="Error"
                             width="50"></button>
-                    <button class="btn btn-dark-outline btn-sm" title="Ver Materiales">
+                    <button class="btn btn-dark-outline btn-sm" title="Ver Repuestos">
                         <a href="{% url 'MCorrectivo' %}{{i.id}}" rel="noopener noreferrer">
                             <img src="{% static 'index/img/entradas.png' %}" alt="Error" width="35">
                         </a>
@@ -474,10 +474,9 @@
 {% for message in messages %}
 <script>
     Swal.fire({
-        icon: 'error',
-        title: 'Error...',
-        text: "{{message}}",
-        footer: "Revise sus datos e intente de nuevo por favor"
+        icon: 'success',
+        title: 'Confirmación',
+        text: "OT agregada correctamente",
     })
 </script>
 {% endfor %}
