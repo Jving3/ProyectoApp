@@ -43,12 +43,12 @@ table, th, td {
  }
  body {
     font-family: Arial, Helvetica, sans-serif !important;
-    background: #fff url('../img/robotica.webp');
+    background: #fff url('../img/robo1.jpg');
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
     background-repeat: no-repeat;
-    background-blend-mode: overlay;
+    background-blend-mode: hard-light;
  }
 
  textarea{
